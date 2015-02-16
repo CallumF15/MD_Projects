@@ -17,6 +17,8 @@ import org.xmlpull.v1.XmlPullParserFactory;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 
 public class CarParkListingTestActivity extends Activity 
@@ -28,6 +30,8 @@ public class CarParkListingTestActivity extends Activity
     
 	private List<CarPark> carList;
 	private CarPark carPark;
+	
+	ListView listView;
 
 	public List<CarPark> CarList() {
 		return carList;
@@ -46,34 +50,39 @@ public class CarParkListingTestActivity extends Activity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         
+        // Get ListView object from xml
+        listView = (ListView) findViewById(R.id.list);
+        
+        
         // Get the TextView object on which to display the results
         response = (TextView)findViewById(R.id.urlResponse);
+        
         try
         {
         	// Get the data from the RSS stream as a string
         	result =  sourceListingString(sourceListingURL);
         	XML_Retrieve(result);
         	
-        	
-        	// Do some processing of the data to get the individual parts of the XML stream
-        	// At some point put this processing into a separate thread of execution
-        	
-        	// Display the string in the TextView object just to demonstrate this capability
-        	// This will need to be removed at some point
-        	//response.setText(result);
         	String temps = "";
+        	 ArrayList<String> list = new ArrayList<String>();
+        	 
         	for (CarPark i : carList) {
         		
-        		 temps = i.getCarParkIdentity() + " \n" +
-						i.getCarParkOccupancy() + " \n" +
+        		list.add(i.getCarParkIdentity()+ "\n" +
+        				i.getCarParkOccupancy() + " \n" +
 						i.getCarParkStatus() + " \n" +
 						i.getOccupiedSpaces() + " \n" +
-						i.getTotalCapacity() + "\n\n";
+						i.getTotalCapacity() + "\n\n");
         		
-        		 holder += temps;
+        	       
+        	
         		
-			}
-        	response.setText(holder);
+        	}
+        	 ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+                     android.R.layout.simple_list_item_1,  list);
+        	 
+             
+ 	        listView.setAdapter(adapter);
         }
         catch(IOException ae)
         {
